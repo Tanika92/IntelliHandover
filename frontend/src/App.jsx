@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
-
+import Projects from "./pages/Projects";
+import Documents from "./pages/Documents";
+import Activity from "./pages/Activity";
+import CreateProject from "./pages/CreateProject";
+import ProjectDetails from "./pages/ProjectDetails";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-
+  const [showProjects,setShowProjects]=useState(false);
+  const [projectFolder,setProjectFolder]=useState("");
+   const [showCreateProject,setShowCreateProject]=useState(false);
+   const [showProjectDetails,setShowProjectDetails]=useState(false);
+  const [showActivity,setShowActivity]=useState(false);
+  const [showDocuments,setShowDocuments]=useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,9 +22,43 @@ function App() {
     setLoggedIn(true);
   };
 
-  if (loggedIn) {
-    return <Dashboard />;
+if (loggedIn) {
+  if (showDocuments) return <Documents />;
+
+  if (showProjectDetails) {
+    return (
+      <ProjectDetails
+        projectFolder={projectFolder}
+        onFilesClick={() => setShowDocuments(true)}
+      />
+    );
   }
+
+  if (showActivity) return <Activity />;
+
+  if (showCreateProject) {
+    return (
+      <CreateProject
+        onProjectCreated={(folder) => {
+          setProjectFolder(folder);
+          setShowProjectDetails(true);
+        }}
+      />
+    );
+  }
+
+  return showProjects ? (
+    <Projects
+      onCreateProject={() => setShowCreateProject(true)}
+    />
+  ) : (
+    <Dashboard
+      onProjectsClick={() => setShowProjects(true)}
+      onDocumentsClick={() => setShowDocuments(true)}
+      onActivityClick={() => setShowActivity(true)}
+    />
+  );
+}
 
   return (
     <div className="login-page">
@@ -57,5 +100,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
